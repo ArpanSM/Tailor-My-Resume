@@ -2,3 +2,5 @@
 context.md
 inputs/resume.txt
 inputs/projects.txt
+output/draftResume.txt
+output/resume.pdf
