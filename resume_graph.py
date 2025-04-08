@@ -25,9 +25,6 @@ class ResumeGenerationState(TypedDict):
 
 # --- Node Functions ---
 
-
-
-
 def generate_draft_resume(state: ResumeGenerationState) -> Dict[str, Any]:
     """
     Generates the initial draft resume using an LLM.
