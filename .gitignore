@@ -4,3 +4,4 @@ context.md
 /output
 input/projects.txt
 input/resume.txt
+__pycache__

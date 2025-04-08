@@ -1,0 +1,73 @@
+Creating a strong resume is all about clarity, relevance, and impact. Here are **core rules** to follow when generating a resume — whether you're building one from scratch or refining an existing version:
+
+---
+
+### 📄 **1. Structure & Formatting**
+- **Keep it 1–2 pages** max (unless you're very senior).
+- **Use clear sections:** Contact Info, Summary, Skills, Experience, Education, Projects (optional).
+- Use **reverse chronological order** (most recent first).
+- Keep **fonts clean** (e.g., Calibri, Arial, Helvetica) and sizes between 10–12 pt.
+- **Avoid graphics or fancy design** unless you're in a creative field (use ATS-friendly layout).
+
+---
+
+### 🧠 **2. Tailored Summary**
+- A 2–3 sentence **career summary** at the top is helpful.
+- Tailor it to the role you're applying for. Mention your title, experience, and what you bring to the table.
+
+> _Example:_
+> _"Machine Learning Engineer with 3+ years of experience in LLMs, MLOps, and cloud deployment. Proven track record in building scalable AI solutions and leading production-grade ML pipelines."_
+
+---
+
+### 💼 **3. Experience (Most Important)**
+- Each role should include:  
+  `Job Title – Company | Location | Dates (Month YYYY – Month YYYY)`
+- Use **bullet points** (3–6 per job).
+- Start each bullet with a **strong action verb** (Built, Led, Automated, Deployed, etc.).
+- Focus on **achievements and impact**, not just responsibilities.
+- **Quantify when possible**: 
+  - “Reduced model latency by 30%”
+  - “Improved accuracy from 85% to 92%”
+
+---
+
+### 🧰 **4. Skills Section**
+- Highlight **technical and soft skills** relevant to the role.
+- Be honest — list only skills you’d be comfortable discussing in an interview.
+- Optionally split into:  
+  `Programming`, `ML Frameworks`, `Cloud`, `DevOps`, `Soft Skills`, etc.
+
+---
+
+### 🎓 **5. Education**
+- Include degree, institution, graduation date.
+- Mention certifications (Coursera, edX, AWS, etc.) if they’re recent or relevant.
+
+---
+
+### 🛠️ **6. Projects (Optional but Great)**
+- Highlight 1–3 key projects (especially if you're early career).
+- Focus on the problem, your approach, tools used, and results.
+- Link to GitHub or portfolio if applicable.
+
+---
+
+### 🚫 **7. Avoid These Mistakes**
+- ❌ Spelling/grammar errors.
+- ❌ Too much jargon or fluff.
+- ❌ Listing every job or tech you’ve ever touched.
+- ❌ Passive voice ("Was responsible for...").
+- ❌ Using "References available on request" — it's outdated.
+
+---
+
+### ✅ **Bonus Tips**
+- Use **keywords from the job description** (for ATS parsing).
+- Save as **PDF** unless instructed otherwise.
+- Use tools like **Rezi, Teal, or Resume Worded** for feedback.
+- Keep an updated **LinkedIn profile** to match your resume.
+
+---
+
+If you’d like, I can **generate a resume** for you or create a **template** based on your background. Want to do that?

@@ -61,6 +61,10 @@ def generate_draft_resume(state: ResumeGenerationState) -> Dict[str, Any]:
         message_state.append({"role": "user", "content": "Based on the draft, please re-generate the draft making sure to follow the rules provided."})
         _, draft = call_litellm(model="gemini/gemini-2.0-flash", messages=message_state)
         print("Draft generated successfully.")
+
+        # save draft to a file
+        with open("output/draft-Resume.txt", "w") as f:
+            f.write(str(draft))
         return {"draft_resume": draft, "error": None}
     except Exception as e:
         print(f"Error in generate_draft_resume: {e}")
@@ -222,9 +226,9 @@ if __name__ == "__main__":
     output_dir.mkdir(exist_ok=True)
 
     required_files = {
-        "job_description": "job_description.txt",
-        "detailed_resume": "detailed_resume.txt",
-        "detailed_projects": "detailed_projects.txt",
+        "job_description": "job-Description.txt",
+        "detailed_resume": "resume-Desc.txt",
+        "detailed_projects": "projects-Desc.txt",
         "rules": "rules.txt",
         "latex_template": "latex_template.tex",
     }
