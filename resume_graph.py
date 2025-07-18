@@ -4,10 +4,14 @@ from pathlib import Path # Add pathlib import
 from typing import TypedDict, Dict, Any
 from langgraph.graph import StateGraph, END, START
 import subprocess # Add subprocess import
+import pypdf # Import pypdf
 
 from utils import call_litellm
 
 # --- State Definition ---
+
+fast_model = 'gemini/gemini-2.0-flash'
+pro_model = 'groq/qwen-qwq-32b'
 
 class ResumeGenerationState(TypedDict):
     """
@@ -32,34 +36,45 @@ def generate_draft_resume(state: ResumeGenerationState) -> Dict[str, Any]:
     """
     print("--- Generating Draft Resume ---")
     try:
-        draft_resume_prompt = f"""
-        Job Description:
-        {state['job_description']}
+        draft_prompt = f"""
+You are expert resume writer.
+You will be provided with a job description, a detailed resume, detailed projects, and a set of rules to follow.
 
-        Detailed Resume:
-        {state['detailed_resume']}
+Task:
+Based on the provided information, generate detailed draft for the resume with reasoning.
 
-        Detailed Projects:
-        {state['detailed_projects']}
+Rules:
+1. Make sure to follow the rules provided.   
+2. The draft should contain reasoning on which experiences, skills and projects are most relevant to the job description. 
+3. The draft should be in the same format as the detailed resume provided.
 
-        Rules:
-        {state['rules']}
+Here are the details:
+Job Description:
+{state['job_description']}
 
-        Task: Based on the job description, detailed resume, detailed projects, and rules provided, generate a tailored resume draft. Focus on highlighting experiences and skills relevant to the job description, adhering strictly to the specified rules for content and style.
-        Output:
-        - A draft resume section for "Experience" and "Projects"
-        - Follow the provided "Rules" for style and formatting
-        """        
+Detailed Resume:
+{state['detailed_resume']}
+
+Detailed Projects:
+{state['detailed_projects']}
+
+Rules:
+{state['rules']}
+        """.strip()
+
+        review_prompt = f"""
+Thoroughly review the draft, please re-generate the draft analyzing the reasoning and making sure to follow the rules provided and making the content more relevant to the job description. This would be the final draft. 
+        """.strip()
+        
         # Combine inputs for the prompt
-        prompt = draft_resume_prompt.format(state=state)
-        print("Prompt for draft generation (truncated):\n", prompt[:500] + "...")
+        draft_prompt = draft_prompt.format(state=state)
 
         # chain of density prompt engineering
-        message_state = [{"role": "user", "content": prompt}]
-        _, draft = call_litellm(model="gemini/gemini-2.0-flash", messages=message_state)
+        message_state = [{"role": "user", "content": draft_prompt}]
+        _, draft = call_litellm(model=pro_model, messages=message_state)
         message_state.append({"role": "assistant", "content": draft})
-        message_state.append({"role": "user", "content": "Based on the draft, please re-generate the draft making sure to follow the rules provided."})
-        _, draft = call_litellm(model="gemini/gemini-2.0-flash", messages=message_state)
+        # message_state.append({"role": "user", "content": review_prompt})
+        # _, draft = call_litellm(model=fast_model, messages=message_state)
         print("Draft generated successfully.")
 
         # save draft to a file
@@ -84,18 +99,19 @@ def convert_to_latex(state: ResumeGenerationState) -> Dict[str, Any]:
         draft = state["draft_resume"]
         template = state["latex_template"]
         prompt = f"""
-        Draft Resume Content:
-        {draft}
+Draft Resume Content:
+{draft}
 
-        LaTeX Template:
-        {template}
+LaTeX Template:
+{template}
 
-        Task: Populate the provided LaTeX template with the draft resume content. Ensure the final output is valid LaTeX code ready for compilation. Place the resume content appropriately within the template structure.
-        """
-        print("Prompt for LaTeX conversion (truncated):\n", prompt[:500] + "...")
+Task: Populate the provided LaTeX template with the draft resume content.
+Ensure the final output is valid LaTeX code ready for compilation. 
+Place the resume content appropriately within the template structure. """
+        # print("Prompt for LaTeX conversion (truncated):\n", prompt[:500] + "...")
 
         message_state = [{"role": "user", "content": prompt}]
-        _, latex_output = call_litellm(model="gemini/gemini-2.0-flash", messages=message_state)
+        _, latex_output = call_litellm(model=fast_model, messages=message_state)
         print("LaTeX generated successfully.")
         # save latex_output to a file
         with open("output/latex_output.tex", "w") as f:
@@ -168,7 +184,32 @@ def convert_to_pdf(state: ResumeGenerationState) -> Dict[str, Any]:
 
         # 3. Check if PDF was created
         if pdf_file_path.is_file():
-            print(f"Successfully created PDF: {pdf_file_path}")
+            print(f"Successfully created initial PDF: {pdf_file_path}")
+
+            # --- Remove the first page using pypdf --- #
+            try:
+                print("Attempting to remove the first page...")
+                reader = pypdf.PdfReader(pdf_file_path)
+                writer = pypdf.PdfWriter()
+
+                if len(reader.pages) > 1:
+                    for page_num in range(1, len(reader.pages)):
+                        writer.add_page(reader.pages[page_num])
+                    # Overwrite the original file
+                    with open(pdf_file_path, "wb") as f_out:
+                        writer.write(f_out)
+                    print(f"Successfully removed the first page. Final PDF saved to: {pdf_file_path}")
+                elif len(reader.pages) == 1:
+                     print("PDF has only one page. No pages removed.")
+                else:
+                    print("Warning: PDF appears to have zero pages after generation. Skipping page removal.")
+
+            except Exception as pdf_error:
+                print(f"Error during PDF page removal: {pdf_error}")
+                # Return failure but keep the originally generated PDF path for inspection
+                return {"pdf_output_path": str(pdf_file_path), "error": f"PDF generated, but failed to remove first page: {pdf_error}"}
+            # --- End of page removal --- #
+
             return {"pdf_output_path": str(pdf_file_path), "error": None}
         else:
             print(f"Error: PDF file {pdf_file_path} not found after running pdflatex.")
@@ -228,7 +269,7 @@ if __name__ == "__main__":
     required_files = {
         "job_description": "job-Description.txt",
         "detailed_resume": "resume-Desc.txt",
-        "detailed_projects": "projects-Desc.txt",
+        "detailed_projects": "project-Desc.txt",
         "rules": "rules.txt",
         "latex_template": "latex_template.tex",
     }

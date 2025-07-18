@@ -30,6 +30,22 @@ router = Router(
             }
         },
         {
+            "model_name": "gemini/ gemini-2.5-pro-exp-03-25",
+            "litellm_params":
+            {
+                "model": "gemini/ gemini-2.5-pro-exp-03-25",
+                "api_key": os.getenv("GEMINI_API_KEY_1")
+            }
+        },
+        {
+            "model_name": "gemini/gemini-2.5-pro-exp-03-25",
+            "litellm_params":
+            {
+                "model": "gemini/gemini-2.5-pro-exp-03-25",
+                "api_key": os.getenv("GEMINI_API_KEY_2")
+            }
+        },
+        {
             "model_name": "gemini/gemini-2.0-flash-lite",
             "litellm_params":
             {
